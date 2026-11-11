@@ -1,0 +1,1 @@
+{"denyTools":["exfiltrate_data","disable_audit_log"],"holdAboveAmount":100,"sensitiveTools":["send_payment","transfer_funds","send_email","delete_file"]}

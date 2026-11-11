@@ -3,8 +3,9 @@
 **An agent safety harness for AI agent crews — built for Kiroween 2026.**
 
 > Status: hackathon project under construction. The policy-gate core, a
-> scripted demo crew, an interactive terminal approver, and tests are in
-> place; policy files and a real tool backend are next (see Roadmap).
+> scripted demo crew, an interactive terminal approver, policy files, an
+> audit-report command, and tests are in place; a real tool backend is
+> next (see Roadmap).
 
 ## What it is
 
@@ -41,12 +42,26 @@ decisions end to end.
 No dependencies and no API keys — plain Node.js (≥ 20).
 
 ```bash
-npm test                  # policy-gate + approver unit tests (node:test)
+npm test                  # policy-gate + approver + policy/report unit tests (node:test)
 npm run demo              # run the demo crew (scripted human approver)
 npm run demo:interactive  # same demo, but you approve HELD calls at the terminal
+npm run report            # summarise the audit log (counts, vetoes, per agent)
 ```
 
 Both demo modes write their audit trail to `logs/audit.jsonl`.
+
+**Policy files** — the hold limit and tool lists don't have to live in
+code. Pass a JSON config (see `policy.example.json`) and the demo runs
+under it:
+
+```bash
+node src/demo.js --policy policy.example.json
+```
+
+Every field is optional (omitted fields keep the defaults), and loading
+is strict: an unknown key, a wrong type, or malformed JSON aborts with
+an error — a mistyped safety policy must never silently fall back to
+looser rules.
 
 The demo runs three calls through the harness:
 
@@ -59,18 +74,23 @@ The demo runs three calls through the harness:
 ## Layout
 
 - `src/harness.js` — the policy gate (`Harness.evaluate` / `Harness.execute`), default policy, audit logging.
+- `src/policy.js` — policy files: `loadPolicy(path)` reads and strictly validates a JSON policy config; `validatePolicy` also guards the harness constructor.
+- `src/report.js` — the audit-report command (`npm run report`): decision/outcome counts, the veto list, per-agent breakdown; also usable as a library (`parseAuditLog` / `summarizeAudit` / `formatReport`).
 - `src/approver.js` — the interactive terminal approver for HELD calls (typed `yes` only; EOF/error decline).
-- `src/demo.js` — the scripted three-agent demo crew (`--interactive` swaps in the terminal approver).
+- `src/demo.js` — the scripted three-agent demo crew (`--interactive` swaps in the terminal approver, `--policy <file>` loads a policy file).
+- `policy.example.json` — an example policy file matching the built-in defaults.
 - `test/harness.test.js` — decision tests: allow, hold+approve, hold+decline (fail closed), injection deny, hard-deny, audit completeness.
 - `test/approver.test.js` — terminal approver tests: explicit-yes parsing, prompt contents, EOF decline, sequential prompts, harness integration, crashing-approver fail-closed.
+- `test/policy.test.js` — policy-file tests: loading, defaults fallback, decisions driven by config, strict rejection of bad files.
+- `test/report.test.js` — report tests: counts, veto list, per-agent breakdown, JSONL parsing, the CLI end to end.
 - `.kiro/steering/` — Kiro steering files (product, tech, structure) describing this project.
 
 ## Roadmap
 
 - ~~Interactive terminal approver for HELD calls (typed approval, not scripted).~~ Done — `src/approver.js`, `npm run demo:interactive`.
 - Pluggable tool backends (real APIs behind the same gate).
-- Policy files (per-crew limits, tool lists) loaded from config.
-- A small report command that summarises the audit log per agent.
+- ~~Policy files (per-crew limits, tool lists) loaded from config.~~ Done — `src/policy.js`, `node src/demo.js --policy <file>`.
+- ~~A small report command that summarises the audit log per agent.~~ Done — `src/report.js`, `npm run report`.
 
 ## License
 

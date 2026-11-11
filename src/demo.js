@@ -13,11 +13,15 @@
 // Run: npm run demo                 (scripted human; writes logs/audit.jsonl)
 //      npm run demo:interactive     (you are the human: HELD calls prompt
 //                                     on the terminal, type "yes" to approve)
+//      node src/demo.js --policy f   (load policy from a JSON config file
+//                                     instead of the built-in defaults —
+//                                     see policy.example.json)
 
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Harness } from './harness.js';
 import { createTerminalApprover } from './approver.js';
+import { loadPolicy } from './policy.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -41,9 +45,20 @@ const approver = interactive
       return true;
     };
 
+// Optional policy file: --policy <path>. An invalid file aborts the demo
+// before any call runs — a mistyped safety policy must never silently
+// fall back to looser defaults.
+const policyFlag = process.argv.indexOf('--policy');
+let policy;
+if (policyFlag !== -1) {
+  policy = loadPolicy(process.argv[policyFlag + 1]);
+  console.log(`Policy loaded from ${process.argv[policyFlag + 1]}: ${JSON.stringify(policy)}`);
+}
+
 const harness = new Harness({
   auditPath: join(root, 'logs', 'audit.jsonl'),
   approver,
+  policy,
 });
 
 async function run(call) {

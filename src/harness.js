@@ -20,6 +20,7 @@
 
 import { appendFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { validatePolicy } from './policy.js';
 
 export const Decision = Object.freeze({
   ALLOW: 'ALLOW',
@@ -50,12 +51,15 @@ export const DEFAULT_POLICY = Object.freeze({
 export class Harness {
   /**
    * @param {object}   opts
-   * @param {object}   [opts.policy]   Partial policy merged over DEFAULT_POLICY.
+   * @param {object}   [opts.policy]   Partial policy merged over DEFAULT_POLICY
+   *                                    (e.g. from loadPolicy() in ./policy.js).
+   *                                    Shape is validated — a bad policy throws.
    * @param {Function} [opts.approver] async (call, reasons) => boolean.
    *                                    Defaults to declining everything (fail closed).
    * @param {string}   [opts.auditPath] JSONL file to append audit entries to.
    */
   constructor({ policy = {}, approver, auditPath } = {}) {
+    validatePolicy(policy);
     this.policy = { ...DEFAULT_POLICY, ...policy };
     this.approver = approver ?? (async () => false);
     this.auditPath = auditPath;
