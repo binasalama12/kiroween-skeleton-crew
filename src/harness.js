@@ -108,7 +108,14 @@ export class Harness {
       executed = true;
       outcome = 'executed';
     } else if (decision === Decision.HOLD) {
-      const approved = await this.approver(call, reasons);
+      // Fail closed: a crashing approver is a decline, never an execution,
+      // and the call is still audited below.
+      let approved = false;
+      try {
+        approved = await this.approver(call, reasons);
+      } catch {
+        reasons.push('approver failed — declining (fail closed)');
+      }
       if (approved) {
         result = await executor(call);
         executed = true;

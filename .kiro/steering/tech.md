@@ -31,6 +31,9 @@
 
 - `npm test` — run the node:test suite in `test/`.
 - `npm run demo` — run `src/demo.js`; writes `logs/audit.jsonl`.
+- `npm run demo:interactive` — demo with the terminal approver
+  (`src/approver.js`): HELD calls prompt for a typed `yes`; anything
+  else, including EOF, declines.
 
 ## Style
 

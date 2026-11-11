@@ -3,8 +3,8 @@
 **An agent safety harness for AI agent crews — built for Kiroween 2026.**
 
 > Status: hackathon project under construction. The policy-gate core, a
-> scripted demo crew, and tests are in place; the interactive approval
-> prompt and a real tool backend are next (see Roadmap).
+> scripted demo crew, an interactive terminal approver, and tests are in
+> place; policy files and a real tool backend are next (see Roadmap).
 
 ## What it is
 
@@ -24,7 +24,10 @@ Every tool call passes through the harness first:
   - amount rule: calls above a configurable monetary limit are held.
 - **Human approval** — a HELD call pauses and is put to a human
   approver. It executes only on an explicit yes; decline, silence, or
-  EOF drops it (fail closed).
+  EOF drops it (fail closed). The terminal approver
+  (`npm run demo:interactive`) shows the agent, tool, arguments, and
+  reasons, and accepts only the full word `yes` — `y`, an empty line,
+  or Ctrl-D all decline.
 - **Audit trail** — every call, its decision, and its outcome are
   appended to a JSONL audit log, so what the crew did — and what it was
   *stopped* from doing — is reviewable after the fact.
@@ -38,9 +41,12 @@ decisions end to end.
 No dependencies and no API keys — plain Node.js (≥ 20).
 
 ```bash
-npm test        # policy-gate unit tests (node:test)
-npm run demo    # run the demo crew; audit trail lands in logs/audit.jsonl
+npm test                  # policy-gate + approver unit tests (node:test)
+npm run demo              # run the demo crew (scripted human approver)
+npm run demo:interactive  # same demo, but you approve HELD calls at the terminal
 ```
+
+Both demo modes write their audit trail to `logs/audit.jsonl`.
 
 The demo runs three calls through the harness:
 
@@ -53,13 +59,15 @@ The demo runs three calls through the harness:
 ## Layout
 
 - `src/harness.js` — the policy gate (`Harness.evaluate` / `Harness.execute`), default policy, audit logging.
-- `src/demo.js` — the scripted three-agent demo crew.
+- `src/approver.js` — the interactive terminal approver for HELD calls (typed `yes` only; EOF/error decline).
+- `src/demo.js` — the scripted three-agent demo crew (`--interactive` swaps in the terminal approver).
 - `test/harness.test.js` — decision tests: allow, hold+approve, hold+decline (fail closed), injection deny, hard-deny, audit completeness.
+- `test/approver.test.js` — terminal approver tests: explicit-yes parsing, prompt contents, EOF decline, sequential prompts, harness integration, crashing-approver fail-closed.
 - `.kiro/steering/` — Kiro steering files (product, tech, structure) describing this project.
 
 ## Roadmap
 
-- Interactive terminal approver for HELD calls (typed approval, not scripted).
+- ~~Interactive terminal approver for HELD calls (typed approval, not scripted).~~ Done — `src/approver.js`, `npm run demo:interactive`.
 - Pluggable tool backends (real APIs behind the same gate).
 - Policy files (per-crew limits, tool lists) loaded from config.
 - A small report command that summarises the audit log per agent.
