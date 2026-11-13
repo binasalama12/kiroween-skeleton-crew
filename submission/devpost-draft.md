@@ -173,12 +173,10 @@ never the default behaviour of the pieces you build from.
 
 ## Try it out / links
 
-- **GitHub repo:** [REPO URL — fill at submit; repo:
-  github.com/[owner]/kiroween-skeleton-crew — verify the public URL before
-  pasting]
+- **GitHub repo:** https://github.com/binasalama12/kiroween-skeleton-crew
 - **Demo video (≈2:30):** [VIDEO URL — fill at submit]
 - **Run it yourself (no install, no credentials):**
-  `git clone [REPO URL] && cd kiroween-skeleton-crew && npm test && npm run demo`
+  `git clone https://github.com/binasalama12/kiroween-skeleton-crew.git && cd kiroween-skeleton-crew && npm test && npm run demo`
 - **Be the human approver:** `npm run demo:interactive` — the Buyer's $750
   payment pauses and asks *you*; type `yes` to approve, anything else (or
   Ctrl-D) to drop it.
