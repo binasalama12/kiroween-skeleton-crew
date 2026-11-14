@@ -13,17 +13,21 @@
 // Run: npm run demo                 (scripted human; writes logs/audit.jsonl)
 //      npm run demo:interactive     (you are the human: HELD calls prompt
 //                                     on the terminal, type "yes" to approve)
-//      node src/demo.js --policy f   (load policy from a JSON config file
+//      node apps/demo-crew/demo.js --policy f
+//                                     (load policy from a JSON config file
 //                                     instead of the built-in defaults —
 //                                     see policy.example.json)
+//
+// This app is the consumer: a scripted crew whose tool calls all pass
+// through the harness app in ../harness/.
 
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { Harness } from './harness.js';
-import { createTerminalApprover } from './approver.js';
-import { loadPolicy } from './policy.js';
+import { Harness } from '../harness/harness.js';
+import { createTerminalApprover } from '../harness/approver.js';
+import { loadPolicy } from '../harness/policy.js';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 // Fake tool implementations — in a real crew these would call real APIs.
 const tools = {
