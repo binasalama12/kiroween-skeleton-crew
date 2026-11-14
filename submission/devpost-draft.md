@@ -83,24 +83,24 @@ silently fall back to looser rules.
 
 ## How we built it
 
-- **Harness core** (`src/harness.js`) — the policy gate. `evaluate()` is a
+- **Harness core** (`apps/harness/harness.js`) — the policy gate. `evaluate()` is a
   pure function of (call, policy), so decisions are unit-testable without
   executors; `execute()` wraps it with approval, execution, and auditing.
   Decisions are a frozen `ALLOW` / `HOLD` / `DENY` enum, and every decision
   carries mandatory human-readable reason strings that flow verbatim to
   the console, the approver prompt, and the audit log.
-- **Policy files** (`src/policy.js`) — `loadPolicy(path)` reads and
+- **Policy files** (`apps/harness/policy.js`) — `loadPolicy(path)` reads and
   strictly validates a JSON config; omitted fields fall back to the
   built-in defaults, anything malformed aborts. The same validator guards
   the harness constructor.
-- **Terminal approver** (`src/approver.js`) — interactive approval for
+- **Terminal approver** (`apps/harness/approver.js`) — interactive approval for
   HELD calls at the keyboard: full prompt (agent, tool, args, reasons),
   only a typed `yes` (case-insensitive, trimmed) approves; EOF, errors,
   and anything else decline.
-- **Audit report** (`src/report.js`) — the `npm run report` command and a
+- **Audit report** (`apps/harness/report.js`) — the `npm run report` command and a
   reusable library (`parseAuditLog` / `summarizeAudit` / `formatReport`):
   counts, vetoes, per-agent breakdown from the JSONL log.
-- **Demo crew** (`src/demo.js`) — the scripted three-agent demo.
+- **Demo crew** (`apps/demo-crew/demo.js`) — the scripted three-agent demo.
   `--interactive` swaps the scripted human for the terminal approver;
   `--policy <file>` runs the demo under a policy file.
 - **Kiro steering files** (`.kiro/steering/product.md`, `tech.md`,
@@ -174,7 +174,7 @@ never the default behaviour of the pieces you build from.
 ## Try it out / links
 
 - **GitHub repo:** https://github.com/binasalama12/kiroween-skeleton-crew
-- **Demo video (≈2:30):** [VIDEO URL — fill at submit]
+- **Demo video (≈2:30):** https://youtu.be/gXRKHWfzb3g (uploaded 13 Nov 2026, unlisted, channel Bina Salama)
 - **Run it yourself (no install, no credentials):**
   `git clone https://github.com/binasalama12/kiroween-skeleton-crew.git && cd kiroween-skeleton-crew && npm test && npm run demo`
 - **Be the human approver:** `npm run demo:interactive` — the Buyer's $750
@@ -182,7 +182,7 @@ never the default behaviour of the pieces you build from.
   Ctrl-D) to drop it.
 - **Summarise what happened:** `npm run report` — decision counts, the
   veto list, and the per-agent breakdown from `logs/audit.jsonl`.
-- **Run under your own policy:** `node src/demo.js --policy
+- **Run under your own policy:** `node apps/demo-crew/demo.js --policy
   policy.example.json`.
 
 ## Tools field (Devpost "Tools" / AI usage)

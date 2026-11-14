@@ -55,7 +55,7 @@ code. Pass a JSON config (see `policy.example.json`) and the demo runs
 under it:
 
 ```bash
-node src/demo.js --policy policy.example.json
+node apps/demo-crew/demo.js --policy policy.example.json
 ```
 
 Every field is optional (omitted fields keep the defaults), and loading
@@ -73,24 +73,28 @@ The demo runs three calls through the harness:
 
 ## Layout
 
-- `src/harness.js` — the policy gate (`Harness.evaluate` / `Harness.execute`), default policy, audit logging.
-- `src/policy.js` — policy files: `loadPolicy(path)` reads and strictly validates a JSON policy config; `validatePolicy` also guards the harness constructor.
-- `src/report.js` — the audit-report command (`npm run report`): decision/outcome counts, the veto list, per-agent breakdown; also usable as a library (`parseAuditLog` / `summarizeAudit` / `formatReport`).
-- `src/approver.js` — the interactive terminal approver for HELD calls (typed `yes` only; EOF/error decline).
-- `src/demo.js` — the scripted three-agent demo crew (`--interactive` swaps in the terminal approver, `--policy <file>` loads a policy file).
+The repo is two apps: **the harness** (the safety gate itself) and
+**the demo crew** (a scripted consumer that runs every tool call
+through the gate).
+
+- `apps/harness/harness.js` — the policy gate (`Harness.evaluate` / `Harness.execute`), default policy, audit logging.
+- `apps/harness/policy.js` — policy files: `loadPolicy(path)` reads and strictly validates a JSON policy config; `validatePolicy` also guards the harness constructor.
+- `apps/harness/report.js` — the audit-report command (`npm run report`): decision/outcome counts, the veto list, per-agent breakdown; also usable as a library (`parseAuditLog` / `summarizeAudit` / `formatReport`).
+- `apps/harness/approver.js` — the interactive terminal approver for HELD calls (typed `yes` only; EOF/error decline).
+- `apps/demo-crew/demo.js` — the scripted three-agent demo crew (`--interactive` swaps in the terminal approver, `--policy <file>` loads a policy file).
 - `policy.example.json` — an example policy file matching the built-in defaults.
-- `test/harness.test.js` — decision tests: allow, hold+approve, hold+decline (fail closed), injection deny, hard-deny, audit completeness.
-- `test/approver.test.js` — terminal approver tests: explicit-yes parsing, prompt contents, EOF decline, sequential prompts, harness integration, crashing-approver fail-closed.
-- `test/policy.test.js` — policy-file tests: loading, defaults fallback, decisions driven by config, strict rejection of bad files.
-- `test/report.test.js` — report tests: counts, veto list, per-agent breakdown, JSONL parsing, the CLI end to end.
+- `apps/harness/test/harness.test.js` — decision tests: allow, hold+approve, hold+decline (fail closed), injection deny, hard-deny, audit completeness.
+- `apps/harness/test/approver.test.js` — terminal approver tests: explicit-yes parsing, prompt contents, EOF decline, sequential prompts, harness integration, crashing-approver fail-closed.
+- `apps/harness/test/policy.test.js` — policy-file tests: loading, defaults fallback, decisions driven by config, strict rejection of bad files.
+- `apps/harness/test/report.test.js` — report tests: counts, veto list, per-agent breakdown, JSONL parsing, the CLI end to end.
 - `.kiro/steering/` — Kiro steering files (product, tech, structure) describing this project.
 
 ## Roadmap
 
-- ~~Interactive terminal approver for HELD calls (typed approval, not scripted).~~ Done — `src/approver.js`, `npm run demo:interactive`.
+- ~~Interactive terminal approver for HELD calls (typed approval, not scripted).~~ Done — `apps/harness/approver.js`, `npm run demo:interactive`.
 - Pluggable tool backends (real APIs behind the same gate).
-- ~~Policy files (per-crew limits, tool lists) loaded from config.~~ Done — `src/policy.js`, `node src/demo.js --policy <file>`.
-- ~~A small report command that summarises the audit log per agent.~~ Done — `src/report.js`, `npm run report`.
+- ~~Policy files (per-crew limits, tool lists) loaded from config.~~ Done — `apps/harness/policy.js`, `node apps/demo-crew/demo.js --policy <file>`.
+- ~~A small report command that summarises the audit log per agent.~~ Done — `apps/harness/report.js`, `npm run report`.
 
 ## License
 
