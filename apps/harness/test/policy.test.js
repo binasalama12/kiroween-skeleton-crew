@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Harness, Decision, DEFAULT_POLICY } from '../src/harness.js';
-import { loadPolicy, validatePolicy } from '../src/policy.js';
+import { Harness, Decision, DEFAULT_POLICY } from '../harness.js';
+import { loadPolicy, validatePolicy } from '../policy.js';
 
 function writePolicyFile(contents) {
   const dir = mkdtempSync(join(tmpdir(), 'skeleton-crew-policy-'));
@@ -61,7 +61,7 @@ test('omitted fields fall back to DEFAULT_POLICY', () => {
 test('the shipped policy.example.json loads and matches the defaults', async () => {
   const { fileURLToPath } = await import('node:url');
   const { dirname } = await import('node:path');
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
   const h = new Harness({ policy: loadPolicy(join(root, 'policy.example.json')) });
   assert.deepEqual(h.policy, { ...DEFAULT_POLICY });
 });

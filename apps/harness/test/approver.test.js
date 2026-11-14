@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { PassThrough } from 'node:stream';
-import { Harness, Decision } from '../src/harness.js';
-import { createTerminalApprover } from '../src/approver.js';
+import { Harness, Decision } from '../harness.js';
+import { createTerminalApprover } from '../approver.js';
 
 const heldCall = {
   agent: 'Buyer',

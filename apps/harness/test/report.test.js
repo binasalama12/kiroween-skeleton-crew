@@ -5,8 +5,8 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Harness, createFixedApprover } from '../src/harness.js';
-import { parseAuditLog, summarizeAudit, formatReport } from '../src/report.js';
+import { Harness, createFixedApprover } from '../harness.js';
+import { parseAuditLog, summarizeAudit, formatReport } from '../report.js';
 
 const noopExecutor = async () => 'ran';
 
@@ -108,7 +108,7 @@ test('the report CLI prints a report for a log file and exits 0', async () => {
   writeFileSync(logPath, entries.map((e) => JSON.stringify(e)).join('\n') + '\n');
 
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-  const out = execFileSync(process.execPath, [join(root, 'src', 'report.js'), logPath], { encoding: 'utf8' });
+  const out = execFileSync(process.execPath, [join(root, 'report.js'), logPath], { encoding: 'utf8' });
   assert.match(out, /Calls:    5/);
   assert.match(out, /Vetoes \(2\):/);
 });
@@ -116,7 +116,7 @@ test('the report CLI prints a report for a log file and exits 0', async () => {
 test('the report CLI fails loudly (exit 1) on a missing log file', () => {
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
   assert.throws(
-    () => execFileSync(process.execPath, [join(root, 'src', 'report.js'), join(tmpdir(), 'no-such-audit.jsonl')], { encoding: 'utf8', stdio: 'pipe' }),
+    () => execFileSync(process.execPath, [join(root, 'report.js'), join(tmpdir(), 'no-such-audit.jsonl')], { encoding: 'utf8', stdio: 'pipe' }),
     (err) => err.status === 1,
   );
 });

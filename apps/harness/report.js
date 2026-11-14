@@ -124,10 +124,10 @@ export function formatReport(summary, { logPath } = {}) {
   return lines.join('\n');
 }
 
-// CLI entry point: `node src/report.js [path]` (via `npm run report`).
+// CLI entry point: `node apps/harness/report.js [path]` (via `npm run report`).
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (isMain) {
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
   const logPath = process.argv[2] ?? join(root, 'logs', 'audit.jsonl');
   let text;
   try {

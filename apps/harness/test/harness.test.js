@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Harness, Decision, createFixedApprover } from '../src/harness.js';
+import { Harness, Decision, createFixedApprover } from '../harness.js';
 
 const noopExecutor = async () => 'ran';
 
